@@ -27,6 +27,8 @@ We believe our artifact qualifies for these badges based on the following eviden
 
   Notably, we extended the runtime execution model from the original: `Generation -> Scenario` to our version `Generation -> Scenario -> Follow`. This enables **follow-up test case execution** in perturbated V2V settings in those imperfect inter-perception conditions mentioned in the main paper.
 
+---
+
 ### Reusable Possibility
 
 - **Inheritance relations**  
@@ -42,14 +44,6 @@ The implementation relationships in our framework are illustrated as follows.
 </div>
 
 In addition, the [safety indicator](scenario/detect.py) component (e.g., minimum distance checks) has been **decoupled** from the [MBK](broker/__init__.py) runtime, enabling **independent** test case safety analysis. This component is designed with extensibility in mind, and can be further developed into an online monitor based on Signal Temporal Logic (STL) [[2](#ref2)]. We are currently planning to evolve it into an online monitor [[3](#ref3)] to support more advanced safety and causality reasoning during runtime.
-
----
-
-### Transparency of Experimental Results
-
-- All experimental data produced in the paper are available for **verification** via an **anonymous** [Google Drive](https://drive.google.com/drive/folders/1Pb6z7N6k8Z1UkwEOk45AIsRG31YMur8X?usp=drive_link).
-
-> **Note to reviewers**: To preserve double-blind review integrity, please access the shared document in **incognito/private browsing mode** to avoid linking your Google account.
 
 ---
 

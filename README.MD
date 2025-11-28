@@ -2,7 +2,7 @@
 
 ## Overview
 
-META²V2V is a **METAmorphic** framework designed to evaluate the decision-making quanlity of Autonomous Driving Systems (ADS) in multi-agent scenarios with vehicle-to-vehicle (V2V)
+META²V2V is a **METAmorphic** framework designed to evaluate the decision-making quality of Autonomous Driving Systems (ADS) in multi-agent scenarios with vehicle-to-vehicle (V2V)
 communication. It systematically explores the effects of degraded inter-vehicle perception on ADS
 behavior by injecting controlled perturbations into information sharing mechanisms by modifying
 the **METAdata**.

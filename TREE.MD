@@ -61,6 +61,5 @@
 │   ├── 🎮 scenario_runner.py
 │   └── 🚦 traffic_light.py
 └── 📁 utils/
-    ├── 🛠️ __init__.py
-    └── 🗜️ compress.py
+    └── 🛠️ __init__.py
 </pre>
