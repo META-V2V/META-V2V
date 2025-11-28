@@ -1,0 +1,8 @@
+deap==1.4.3
+docker==7.1.0
+networkx==3.5
+numpy==2.3.0
+pandas==2.3.0
+protobuf==3.19.0
+Shapely==2.1.1
+websocket_client==1.8.0
