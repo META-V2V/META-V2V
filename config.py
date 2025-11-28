@@ -17,7 +17,7 @@ APOLLO_VEHICLE_back_edge_to_center = 1.043
 ######################## DIRECTORIES #########################
 
 MT_ROOT = Path(__file__).parent
-"""Root directory of Meta-V2V"""
+"""Root directory of META²V2V"""
 APOLLO_ROOT = f'{MT_ROOT}/BaiduApollo'
 """Root directory of Apollo 7.0"""
 RECORDS_DIR = f'{MT_ROOT}/records'
@@ -58,7 +58,7 @@ STAGE1 = 5
 
 BK_PARAM_MAP = {
     'RadiusBroker': [100, 80, 60, 40, 20, 10, 5],
-    'DelayBroker': [0.2, 0.4, 0.8, 1.0],
+    'LatencyBroker': [0.2, 0.4, 0.8, 1.0],
     'NoiseBroker': [0.5, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0],
-    'IntermittentBroker': [0.05, 0.1, 0.15, 0.2, 0.25, 0.5]
+    'IntermittenceBroker': [0.05, 0.1, 0.15, 0.2, 0.25, 0.5]
 }

@@ -11,7 +11,6 @@ from hdmap.parser import MapParser
 from genetic.crossover import cx_scenario
 from genetic.mutation import mut_scenario
 from genetic.evaluate import eval_stage_2
-from utils.compress import compress_record_files
 from config import (APOLLO_ROOT, HD_MAP, MAX_ADC_COUNT, RECORDS_DIR,
                     RUN_FOR_HOUR, POP_SIZE, BK_PARAM_MAP)
 from utils import BK_FILE_MAP, BK_HEAD_MAP
@@ -112,9 +111,20 @@ def main_robustness(bk_type: str, cxpb: float, mutpb: float):
         # timer check
         tdelta = (datetime.now() - start_time).total_seconds()
         if tdelta / 3600 > RUN_FOR_HOUR:
-            compress_record_files(containers, timestamp, bk_type, 'robustness')
             break
 
 if __name__ == '__main__':
 
-    main_robustness(bk_type='MessageBroker', cxpb=0.8, mutpb=0.2)
+    bktype = input("Enter the broker type: RadiusBroker, LatencyBroker, NoiseBroker or IntermittenceBroker: ")
+    if bktype not in BK_PARAM_MAP:
+        raise ValueError(f"Invalid broker type: {bktype}")
+    print("Note: The following sum of crossover and mutation probability should not exceed 1")
+    cx_pb = float(input("Enter the crossover probability [0,1], baseline is 0.8: "))
+    if cx_pb < 0 or cx_pb > 1:
+        raise ValueError(f"Invalid crossover probability: {cx_pb}")
+    mut_pb = float(input("Enter the mutation probability [0,1], baseline is 0.2: "))
+    if mut_pb < 0 or mut_pb > 1:
+        raise ValueError(f"Invalid mutation probability: {mut_pb}")
+    if cx_pb + mut_pb > 1:
+        raise ValueError(f"Invalid crossover and mutation probability: {cx_pb} + {mut_pb} > 1")
+    main_robustness(bk_type=bktype, cxpb=cx_pb, mutpb=mut_pb)

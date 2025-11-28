@@ -83,7 +83,8 @@ def install_dependency(dependency: str):
         run_cmd("sudo systemctl enable docker")
         run_cmd(f"sudo usermod -aG docker {os.getenv('USER')}")
         
-        log_warning("Docker installed. Please log out and log back in for group changes to take effect.")
+        log_error("Docker installed. Please restart the host machine for docker daemon service to take effect. Then re-run install_apollo.py")
+        sys.exit(1)
     elif dependency == 'git':
         run_cmd("sudo apt-get update")
         run_cmd("sudo apt-get install -y git")
@@ -199,7 +200,7 @@ def main():
     mt_root = script_dir
 
     log_info(f"Apollo directory: {apollo_root}")
-    log_info(f"Meta-V2V directory: {mt_root}")
+    log_info(f"META²V2V directory: {mt_root}")
 
     # Check dependencies
     check_and_install_dependencies()
@@ -216,7 +217,7 @@ def main():
     if not apollo_root.exists():
         log_info("Cloning Apollo code...")
         # Clone the official repository of DoppelTest (ICSE 2023), a previously published work.
-        # Note: This repository is used as a dependency. Our work (Meta-V2V) is independent and unrelated to the DoppelTest authors.
+        # Note: This repository is used as a dependency. Our work (META²V2V) is independent and unrelated to the DoppelTest authors.
         # Declaration: The authors of this paper have no overlap with the DoppelTest teams and declare no conflict of interest.
         # We comply with the double-blind review policy.
         run_cmd(f"git clone -b DoppelTest https://github.com/YuqiHuai/BaiduApollo.git {apollo_root}")
@@ -226,7 +227,7 @@ def main():
         if input("Do you want to re-clone? (y/N): ").lower() == 'y':
             shutil.rmtree(apollo_root)
         # Clone the official repository of DoppelTest (ICSE 2023), a previously published work.
-        # Note: This repository is used as a dependency. Our work (Meta-V2V) is independent and unrelated to the DoppelTest authors.
+        # Note: This repository is used as a dependency. Our work (META²V2V) is independent and unrelated to the DoppelTest authors.
         # Declaration: The authors of this paper have no overlap with DoppelTest teams and declare no conflict of interest.
         # We comply with the double-blind review policy.
             run_cmd(f"git clone -b DoppelTest https://github.com/YuqiHuai/BaiduApollo.git {apollo_root}")

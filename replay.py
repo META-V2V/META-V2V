@@ -43,16 +43,21 @@ def main():
     # initialize the container, create a new container with the TEST route name
     container = ApolloContainer(APOLLO_ROOT, 'ROUTE_TEST')
     container.start_instance(restart=True)
-    # [TODO] This is the sub-optimal solution, we do have ways to make it faster without requiring 
-    # restart, but it involves modify the BaiduApollo's DoppelTest branch, a public repository,
-    # which means that the forked one will leakage our Meta-V2V author's identities.
-    # To comply with the double-blind review, we will implement the faster way after any acceptance
     container.start_dreamview()
     print(f'Dreamview at http://{container.ip}:{container.port}')
 
     # execute the replay command in the docker container by CyberRT
     command = (f"source ./cyber/setup.bash; cyber_recorder play -f ./replay.00000 -a -l")
     execute_command_in_docker(container.container_name, command)
+    while True:
+        # wait for the user to stop the container
+        stop_signal = input("Enter 'q' to stop the container...")
+        if stop_signal.strip().lower() == 'q':
+            container.stop_instance()
+            print("Container stopped.")
+            break
+        else:
+            print("Invalid input, container will not be stopped.")
 
 if __name__ == '__main__':
 

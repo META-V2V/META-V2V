@@ -1161,32 +1161,32 @@
 		</g>
 		<g id="shape264-164" transform="translate(266.531,-36.0748)">
 			<title>圆角矩形.264</title>
-			<desc>Intermittent Broker</desc>
-			<path d="M4.1 398.34 L61.1 398.34 A4.09949 4.09949 -180 0 0 65.2 394.24 L65.2 375.54 A4.09949 4.09949 -180 0 0 61.1 371.44
-						 L4.1 371.44 A4.09949 4.09949 -180 0 0 0 375.54 L0 394.24 A4.09949 4.09949 -180 0 0 4.1 398.34 Z"
-					class="st2"/>
-			<text x="6.22" y="381.89" class="st3">Intermittent <tspan x="17.32" dy="1.2em" class="st4">Broker</tspan></text>		</g>
+			<desc>Intermittence Broker</desc>
+			<path d="M4.44 398.34 L66.12 398.34 A4.43654 4.43654 -180 0 0 70.56 393.91 L70.56 375.87 A4.43654 4.43654 -180 0 0 66.12
+						 371.44 L4.44 371.44 A4.43654 4.43654 -180 0 0 -0 375.87 L0 393.91 A4.43654 4.43654 -180 0 0 4.44 398.34
+						 Z" class="st2"/>
+			<text x="6.13" y="381.89" class="st3">Intermittence <tspan x="20.01" dy="1.2em" class="st4">Broker</tspan></text>		</g>
 		<g id="shape265-168" transform="translate(264.191,-90.4604)">
 			<title>圆角矩形.265</title>
 			<desc>Noise Broker</desc>
-			<path d="M4.1 398.34 L61.1 398.34 A4.09949 4.09949 -180 0 0 65.2 394.24 L65.2 375.54 A4.09949 4.09949 -180 0 0 61.1 371.44
-						 L4.1 371.44 A4.09949 4.09949 -180 0 0 0 375.54 L0 394.24 A4.09949 4.09949 -180 0 0 4.1 398.34 Z"
-					class="st2"/>
-			<text x="20.93" y="381.89" class="st3">Noise <tspan x="17.32" dy="1.2em" class="st4">Broker</tspan></text>		</g>
+			<path d="M4.44 398.34 L66.12 398.34 A4.43654 4.43654 -180 0 0 70.56 393.91 L70.56 375.87 A4.43654 4.43654 -180 0 0 66.12
+						 371.44 L4.44 371.44 A4.43654 4.43654 -180 0 0 -0 375.87 L0 393.91 A4.43654 4.43654 -180 0 0 4.44 398.34
+						 Z" class="st2"/>
+			<text x="23.61" y="381.89" class="st3">Noise <tspan x="20.01" dy="1.2em" class="st4">Broker</tspan></text>		</g>
 		<g id="shape266-172" transform="translate(264.521,-150.902)">
 			<title>圆角矩形.266</title>
-			<desc>Delay Broker</desc>
-			<path d="M4.1 398.34 L61.1 398.34 A4.09949 4.09949 -180 0 0 65.2 394.24 L65.2 375.54 A4.09949 4.09949 -180 0 0 61.1 371.44
-						 L4.1 371.44 A4.09949 4.09949 -180 0 0 0 375.54 L0 394.24 A4.09949 4.09949 -180 0 0 4.1 398.34 Z"
-					class="st2"/>
-			<text x="20.38" y="381.89" class="st3">Delay <tspan x="17.32" dy="1.2em" class="st4">Broker</tspan></text>		</g>
+			<desc>Latency Broker</desc>
+			<path d="M4.44 398.34 L66.12 398.34 A4.43654 4.43654 -180 0 0 70.56 393.91 L70.56 375.87 A4.43654 4.43654 -180 0 0 66.12
+						 371.44 L4.44 371.44 A4.43654 4.43654 -180 0 0 -0 375.87 L0 393.91 A4.43654 4.43654 -180 0 0 4.44 398.34
+						 Z" class="st2"/>
+			<text x="18.06" y="381.89" class="st3">Latency <tspan x="20.01" dy="1.2em" class="st4">Broker</tspan></text>		</g>
 		<g id="shape267-176" transform="translate(262.279,-215.383)">
 			<title>圆角矩形.267</title>
 			<desc>Radius Broker</desc>
-			<path d="M4.1 398.34 L61.1 398.34 A4.09949 4.09949 -180 0 0 65.2 394.24 L65.2 375.54 A4.09949 4.09949 -180 0 0 61.1 371.44
-						 L4.1 371.44 A4.09949 4.09949 -180 0 0 0 375.54 L0 394.24 A4.09949 4.09949 -180 0 0 4.1 398.34 Z"
-					class="st2"/>
-			<text x="17.59" y="381.89" class="st3">Radius <tspan x="17.32" dy="1.2em" class="st4">Broker</tspan></text>		</g>
+			<path d="M4.44 398.34 L66.12 398.34 A4.43654 4.43654 -180 0 0 70.56 393.91 L70.56 375.87 A4.43654 4.43654 -180 0 0 66.12
+						 371.44 L4.44 371.44 A4.43654 4.43654 -180 0 0 -0 375.87 L0 393.91 A4.43654 4.43654 -180 0 0 4.44 398.34
+						 Z" class="st2"/>
+			<text x="20.27" y="381.89" class="st3">Radius <tspan x="20.01" dy="1.2em" class="st4">Broker</tspan></text>		</g>
 		<g id="group273-180" transform="translate(266.531,-49.5273)">
 			<title>继承</title>
 			<g id="shape273-181">
@@ -1233,11 +1233,11 @@
 			<text x="30.41" y="379.56" class="st3">Safety <tspan x="23.74" dy="1.2em" class="st4">Indicator</tspan></text>		</g>
 		<g id="shape411-220" transform="translate(235.845,-348.269)">
 			<title>圆角矩形.411</title>
-			<desc>MR Parser</desc>
+			<desc>MR Violation Checker</desc>
 			<path d="M5.61 398.34 L81.87 398.34 A5.60736 5.60736 -180 0 0 87.48 392.74 L87.48 372.38 A5.60736 5.60736 -180 0 0 81.87
 						 366.77 L5.61 366.77 A5.60736 5.60736 -180 0 0 0 372.38 L0 392.74 A5.60736 5.60736 -180 0 0 5.61 398.34 Z"
 					class="st2"/>
-			<text x="35.41" y="379.56" class="st3">MR <tspan x="29.58" dy="1.2em" class="st4">Parser</tspan></text>		</g>
+			<text x="35.41" y="379.56" class="st3">MR <tspan x="4.71" dy="1.2em" class="st4">Violation Checker</tspan></text>		</g>
 		<g id="shape424-224" transform="translate(561.903,50.0736) rotate(90)">
 			<title>工作表.424</title>
 			<path d="M0 398.34 L18.72 398.34" class="st16"/>

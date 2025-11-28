@@ -1,5 +1,5 @@
 <pre>
-📁 Meta-V2V
+📁 META-V2V
 ├── 📝 ARTIFACT.MD
 ├── 📝 FEATURES.MD
 ├── 📝 INSTALL.MD
@@ -14,9 +14,9 @@
 │   └── 🛠️ utils.py
 ├── 📁 broker/
 │   ├── 🧩 __init__.py
-│   ├── ⏱️ delay.py
+│   ├── ⏱️ latency.py
 │   ├── 🏭 factory.py
-│   ├── ⚡ intermittent.py
+│   ├── ⚡ intermittence.py
 │   ├── 🔊 noise.py
 │   └── 📏 radius.py
 ├── ⚙️ config.py

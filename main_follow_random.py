@@ -7,7 +7,6 @@ from scenario import Scenario
 from scenario.scenario_runner import ScenarioRunner
 from hdmap.parser import MapParser
 from genetic.evaluate import eval_stage_2
-from utils.compress import compress_record_files
 from config import (APOLLO_ROOT, HD_MAP, MAX_ADC_COUNT, RECORDS_DIR, RUN_FOR_HOUR, BK_PARAM_MAP)
 from utils import BK_FILE_MAP, BK_HEAD_MAP
 
@@ -62,9 +61,11 @@ def main_random(bk_type: str):
         # timer check
         tdelta = (datetime.now() - start_time).total_seconds()
         if tdelta / 3600 > RUN_FOR_HOUR:
-            compress_record_files(containers, timestamp, bk_type, 'random')
             break
 
 if __name__ == '__main__':
 
-    main_random(bk_type='MessageBroker')
+    bktype = input("Enter the broker type: RadiusBroker, LatencyBroker, NoiseBroker or IntermittenceBroker: ")
+    if bktype not in BK_PARAM_MAP:
+        raise ValueError(f"Invalid broker type: {bktype}")
+    main_random(bk_type=bktype)

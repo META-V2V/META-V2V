@@ -1,15 +1,15 @@
 from broker import MessageBroker
 from broker.radius import RadiusBroker
-from broker.delay import DelayBroker
+from broker.latency import LatencyBroker
 from broker.noise import NoiseBroker
-from broker.intermittent import IntermittentBroker
+from broker.intermittence import IntermittenceBroker
 from typing import Any
 
 class BrokerFactory:
     """
     A Factory Method to produce MessageBroker and its corresponding subclasses, dynamically
 
-    :param str mode: working mode, to create different brokers:{MessageBroker, RadiusBroker, DelayBroker, NoiseBroker, IntermittentBroker}
+    :param str mode: working mode, to create different brokers:{MessageBroker, RadiusBroker, LatencyBroker, NoiseBroker, IntermittenceBroker}
     :param Any param: parameter for the message brokers
     """
     mode: str
@@ -42,8 +42,8 @@ class BrokerFactory:
         
         param str mode: Command the working mode for Broker
         """
-        if mode not in ('MessageBroker', 'RadiusBroker', 'DelayBroker', 'NoiseBroker', 
-                        'IntermittentBroker'):
+        if mode not in ('MessageBroker', 'RadiusBroker', 'LatencyBroker', 'NoiseBroker', 
+                        'IntermittenceBroker'):
             raise ValueError("Unexpected mode in BrokerFactory")
         self.mode = mode
 
@@ -74,11 +74,11 @@ class BrokerFactory:
             return MessageBroker(runners)
         elif self.mode == 'RadiusBroker':
             return RadiusBroker(runners, self.param)
-        elif self.mode == 'DelayBroker':
-            return DelayBroker(runners, self.param)
+        elif self.mode == 'LatencyBroker':
+            return LatencyBroker(runners, self.param)
         elif self.mode == 'NoiseBroker':
             return NoiseBroker(runners, self.param, 0, 0, 0)
-        elif self.mode == 'IntermittentBroker':
-            return IntermittentBroker(runners, self.param)
+        elif self.mode == 'IntermittenceBroker':
+            return IntermittenceBroker(runners, self.param)
         else:
             raise ValueError("Unexpected mode in BrokerFactory")

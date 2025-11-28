@@ -30,7 +30,7 @@ We believe our artifact qualifies for these badges based on the following eviden
 ### Reusable Possibility
 
 - **Inheritance relations**  
-We follow object-oriented methodology. We carefully designed the [MessageBroker](broker/__init__.py) class along with four subclasses (i.e. [RadiusBroker](broker/radius.py), [DelayBroker](broker/delay.py), [NoiseBroker](broker/noise.py) and [IntermittentBroker](broker/intermittent.py)) inheritance structures, leveraging function overloading to support imperfect inter-perception simulation among connected vehicles.
+We follow object-oriented methodology. We carefully designed the [MessageBroker](broker/__init__.py) class along with four subclasses (i.e. [RadiusBroker](broker/radius.py), [LatencyBroker](broker/latency.py), [NoiseBroker](broker/noise.py) and [IntermittenceBroker](broker/intermittence.py)) inheritance structures, leveraging function overloading to support imperfect inter-perception simulation among connected vehicles.
 
 - **Factory method**  
 By using the factory pattern in [BrokerFactory](broker/factory.py) class, the system can dynamically assign different broker strategies at runtime, allowing greater extensibility and flexibility for future research with other customized V2V information sharing mechanisms beside those introduced in the main paper.
@@ -70,6 +70,10 @@ For an example, we refactored the [traffic signal control](scenario/traffic_ligh
 In contrast, the original DoppelTest implementation could only perform one-off signal changes (e.g., `green → yellow → red` or `red → green`). Our mutually exclusive cyclic signaling algorithm allows for the exploration of longer scenarios and supports more complex and extended maps.
 
 Additionally, we added several utility functions that may be useful in future extensions. Since these modifications were made directly within the DoppelTest codebase, it became difficult to decouple the two. Therefore, we opted to restructure the codebase accordingly.
+
+## Call for LHT support
+
+During our experiments, we followed the default right-hand traffic (RHT) configuration of the system under test. However, we observed that the current open-source version of Baidu Apollo lacks support for left-hand traffic (LHT) and right-hand drive (RHD) configurations. In response, we propose this as a potential improvement area and encourage the open-source community to consider addressing it, in order to facilitate autonomous driving research in LHT countries. Details: [call_for_LHT_support.MD](call_for_LHT_support.MD)
 
 ## References
 

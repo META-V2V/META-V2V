@@ -5,7 +5,7 @@
 | Perturbation | Notation | Description |
 |:------------:|:--------:|-------------|
 | Radius limit | $\Delta^{RD}$ | Truncates shared perception beyond a given communication range to simulate limited V2V range. |
-| Latency | $\Delta^{LC}$ | Delays the reception of shared information, emulating network-induced delays or transmission lags. |
+| Latency | $\Delta^{LC}$ | Latency the reception of shared information, emulating network-induced latency or transmission lags. |
 | Gaussian noise | $\Delta^{NS}$ | Injects Gaussian noise into shared positions, reflecting sensor inaccuracies or fusion errors. |
 | Packet loss | $\Delta^{IT}$ | Randomly drops messages based on a probability model, simulating unstable or lossy wireless communication. |
 

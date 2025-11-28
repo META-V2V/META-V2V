@@ -6,21 +6,20 @@ import random
 import shutil
 from typing import List, Dict, Tuple, Any
 from config import APOLLO_ROOT, RECORDS_DIR, STREAM_LOGGING_LEVEL
-import requests
 import subprocess
 
 BK_FILE_MAP = {
     'RadiusBroker': 'radius',
-    'DelayBroker': 'delay',
+    'LatencyBroker': 'latency',
     'NoiseBroker': 'noise',
-    'IntermittentBroker': 'intermittent'
+    'IntermittenceBroker': 'intermittence'
 }
 
 BK_HEAD_MAP = {
     'RadiusBroker': 'radius',
-    'DelayBroker': 'delay',
+    'LatencyBroker': 'latency',
     'NoiseBroker': 'noise',
-    'IntermittentBroker': 'p'
+    'IntermittenceBroker': 'p'
 }
 
 def get_logger(name, filename=None, log_to_file=False) -> logging.Logger:
@@ -118,24 +117,6 @@ def save_record_files_and_chromosome(timestamp: str, gen_name: str, ind_name: st
         bk_param = None              # parano sense for MessageBroker
     with open(bk_file, 'w') as fp:
         json.dump({'mode': bk_mode, 'param': bk_param}, fp, indent=4)
-
-def send_push_pushover(message: str) -> requests.Response:
-    """
-    Send a push notification to the Pushover app
-
-    :param str message: the message to send
-    :returns: the response from the Pushover app
-    :rtype: requests.Response
-    """
-    token = "as286xhbcqksaz7rj54r2ow9gsfxjw"
-    user = "ukgks1x2syems2aekji1frbqqifkgx"
-    url = "https://api.pushover.net/1/messages.json"
-    data = {
-        "token": token,
-        "user": user,
-        "message": message
-    }
-    return requests.post(url, data=data)
 
 def kill_apollo_container(route_name: str):
     """

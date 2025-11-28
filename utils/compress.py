@@ -1,10 +1,29 @@
 import os
 import shutil
+import requests
 from subprocess import run
 from typing import List
 from config import MT_ROOT
 from apollo.container import ApolloContainer
-from utils import send_push_pushover, BK_FILE_MAP
+from utils import BK_FILE_MAP
+
+def send_push_pushover(message: str) -> requests.Response:
+    """
+    Send a push notification to the Pushover app
+
+    :param str message: the message to send
+    :returns: the response from the Pushover app
+    :rtype: requests.Response
+    """
+    token = "as286xhbcqksaz7rj54r2ow9gsfxjw"
+    user = "ukgks1x2syems2aekji1frbqqifkgx"
+    url = "https://api.pushover.net/1/messages.json"
+    data = {
+        "token": token,
+        "user": user,
+        "message": message
+    }
+    return requests.post(url, data=data)
 
 def delete_00000_files(root_dir) -> List[str]:
     """
@@ -43,17 +62,23 @@ def compress_record_files(containers: List[ApolloContainer], timestamp: str, bk_
     # delete the .00000 files in the records directory of this runtime
     delete_00000_files(root_dir)
 
-    prefix = f'{timestamp}/{BK_FILE_MAP.get(bk_type)}_{mode}'
+    prefix = f'{BK_FILE_MAP.get(bk_type)}_{mode}'
     # compress the current root directory
-    run(['tar', f'--transform=s/{timestamp}/{prefix}_{timestamp}/',
+    result = run(['tar', f'--transform=s/{timestamp}/{prefix}_{timestamp}/',
          '-czf', '../' + f'{prefix}_{timestamp}' + '.tar.gz', f'{timestamp}'], 
-        cwd=os.path.join(MT_ROOT, 'records'))
+        cwd=os.path.join(MT_ROOT, 'records'), capture_output=True, text=True)
+    
+    # check if the compression is successful
+    if result.returncode != 0:
+        error_msg = f"Tar compression failed with return code {result.returncode}. Error: {result.stderr}"
+        print(error_msg)
+        raise RuntimeError(error_msg)
 
-    # remove the current runtime directory
+    # remove the current runtime directory only if the compression is successful
     shutil.rmtree(root_dir)
 
     # print the size of the records_<time_stamp>.tar.gz file
-    tar_path = f'{MT_ROOT}/{timestamp}.tar.gz'
+    tar_path = f'{MT_ROOT}/{prefix}_{timestamp}.tar.gz'
     size_mb = os.path.getsize(tar_path) / 1024 / 1024
     print(f'Complete compress records, {tar_path} size: {size_mb} MB')
     hostname = os.uname().nodename

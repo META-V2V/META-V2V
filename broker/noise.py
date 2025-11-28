@@ -156,7 +156,7 @@ class NoiseBroker(MessageBroker):
                     Topics.Obstacles, bag.SerializeToString()
                 )
 
-            # Note: move the min_distance update to ScenarioRunner for DelayBroker
+            # Note: move the min_distance update to ScenarioRunner for LatencyBroker
 
             header_sequence_num += 1
             time.sleep(1/PERCEPTION_FREQUENCY)
