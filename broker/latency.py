@@ -1,4 +1,5 @@
 import time
+import queue
 from logging import Logger
 from threading import Thread
 from typing import List
@@ -24,6 +25,8 @@ class LatencyBroker(MessageBroker):
     spinning: bool
     logger: Logger
     t: Thread
+    delay_thread: Thread
+    message_queue: queue.Queue
 
     def __init__(self, runners: List[ApolloRunner], latency: float) -> None:
         """
@@ -32,6 +35,48 @@ class LatencyBroker(MessageBroker):
         super().__init__(runners)
         self.latency = latency
         self.logger = get_logger(self.__class__.__name__)
+        self.message_queue = queue.Queue()
+        self.delay_thread = None
+
+    def _delay_worker(self) -> None:
+        """
+        Worker thread to handle delayed message publishing
+        """
+        while self.spinning:
+            try:
+                # Get message from queue with timeout
+                message_data = self.message_queue.get(timeout=0.1)
+                if message_data is None:  # Shutdown signal
+                    break
+                
+                runner_nid, perception_obs, header_sequence_num = message_data
+                
+                # Wait for the specified latency
+                time.sleep(self.latency)
+                
+                # Publish the delayed message
+                header = Header(
+                    timestamp_sec=time.time(),
+                    module_name='MAGGIE',
+                    sequence_num=header_sequence_num
+                )
+                bag = PerceptionObstacles(
+                    header=header,
+                    perception_obstacle=perception_obs,
+                )
+                
+                # Find the corresponding runner and publish
+                for runner in self.runners:
+                    if runner.nid == runner_nid:
+                        runner.container.bridge.publish(
+                            Topics.Obstacles, bag.SerializeToString()
+                        )
+                        break
+                        
+            except queue.Empty:
+                continue
+            except Exception as e:
+                self.logger.error(f"Error in delay worker: {e}")
 
     def _spin(self) -> None:
         """
@@ -39,6 +84,11 @@ class LatencyBroker(MessageBroker):
         """
         header_sequence_num = 0
         curr_time = 0.0
+        
+        # Start delay worker thread
+        self.delay_thread = Thread(target=self._delay_worker)
+        self.delay_thread.start()
+        
         while self.spinning:
             # retrieve localization of running instances
             locations = dict()
@@ -58,8 +108,7 @@ class LatencyBroker(MessageBroker):
             pm = PedestrianManager.get_instance()
             pds = pm.get_pedestrians(curr_time)
 
-            # collect perception obj messages
-            perception_dict = dict()
+            # collect perception obj messages and queue them for delayed publishing
             for runner in self.runners:
                 perception_obs = []
                 for i in obs_poly:
@@ -68,24 +117,9 @@ class LatencyBroker(MessageBroker):
                     if runner.nid in obs_poly and i in obs_poly:
                         perception_obs.append(obs[i])
                 perception_obs += pds      # add pedestrian obstacles
-                perception_dict[runner.nid] = perception_obs
-
-            time.sleep(self.latency)         # latency perception messages by self.latency seconds
-
-            # publish perception messages
-            for runner in self.runners:
-                header = Header(
-                    timestamp_sec=time.time(),
-                    module_name='MAGGIE',
-                    sequence_num=header_sequence_num
-                )
-                bag = PerceptionObstacles(
-                    header=header,
-                    perception_obstacle=perception_dict[runner.nid],
-                )
-                runner.container.bridge.publish(
-                    Topics.Obstacles, bag.SerializeToString()
-                )
+                
+                # Queue the message for delayed publishing
+                self.message_queue.put((runner.nid, perception_obs, header_sequence_num))
 
             # Note: move the min_distance update to ScenarioRunner for LatencyBroker
 
@@ -93,6 +127,22 @@ class LatencyBroker(MessageBroker):
             time.sleep(1/PERCEPTION_FREQUENCY)
             curr_time += 1/PERCEPTION_FREQUENCY
 
+    def stop(self) -> None:
+        """
+        Stops forwarding localization and delay worker
+        """
+        self.logger.debug('Stopping')
+        if not self.spinning:
+            return
+        self.spinning = False
+        
+        # Signal delay worker to stop
+        if self.delay_thread and self.delay_thread.is_alive():
+            self.message_queue.put(None)  # Shutdown signal
+            self.delay_thread.join()
+        
+        if self.t and self.t.is_alive():
+            self.t.join()
+
     # def broadcast(self, channel: Channel, data: bytes): No need to override
     # def spin(self): No need to override
-    # def stop(self): No need to override
