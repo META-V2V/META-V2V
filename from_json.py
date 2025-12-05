@@ -8,6 +8,7 @@ from hdmap.parser import MapParser
 from broker.factory import BrokerFactory
 from config import HD_MAP, MAX_ADC_COUNT, APOLLO_ROOT, MT_ROOT
 from genetic import min_distance
+from utils import get_max_container_number
 
 def main():
 
@@ -27,6 +28,7 @@ def main():
 
     mp = MapParser.get_instance(HD_MAP)
     bkf = BrokerFactory()
+    offset = get_max_container_number()+1
 
     # set the type of Message Broker
     with open(communication_json, 'r') as fp:
@@ -36,7 +38,7 @@ def main():
 
     # initialize the json replay containers
     containers = [ApolloContainer(
-        APOLLO_ROOT, f'ROUTE_{x}') for x in range(MAX_ADC_COUNT)]
+        APOLLO_ROOT, f'ROUTE_{x+offset}') for x in range(MAX_ADC_COUNT)]
     for ctn in containers:
         ctn.start_instance()
         ctn.start_dreamview()
@@ -54,6 +56,8 @@ def main():
     min_distance(timestamp, ind)
     print(f'Record file saved in ./records/{timestamp}/Generation_00000/Scenario_00000/Follow_00000 directory')
     print(f'those .00000 files\' infinite cycle replay is available in {MT_ROOT}/replay.py')
+    for ctn in containers:
+        ctn.stop_instance()
 
 if __name__ == '__main__':
 

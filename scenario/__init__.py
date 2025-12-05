@@ -6,7 +6,7 @@ from config import HD_MAP
 from scenario.ad_agents import ADAgent, ADSection
 from scenario.pd_agents import PDAgent, PDSection
 from scenario.traffic_light import TrafficSection
-from scenario.fitness import SoundnessFitness, RobustnessFitness
+from scenario.fitness import DoppeltestFitness, SoundnessFitness, RobustnessFitness, MinSingleFitness, MaxSingleFitness
 from hdmap.parser import MapParser
 import inspect
 
@@ -40,18 +40,42 @@ class Scenario:
 
         :main_soundness_ga.py: SoundnessFitness;
         :main_robustness_ga.py: RobustnessFitness;
+        :main_doppeltest_ga.py: DoppeltestFitness;
+        :main_soundness_single.py: MinSingleFitness;
+        :main_robustness_single.py: MinSingleFitness;
         :other scripts: None;
         """
         self.fitness: Fitness = None       # default to None
         stack = inspect.stack()
         try:
             for frame in stack:
-                if frame.filename.endswith(('main_soundness_ga.py', 'main_robustness_ga.py')):
+                if frame.filename.endswith(('main_soundness_ga.py', 'main_robustness_ga.py',
+                                            'main_doppeltest_ga.py', 'main_soundness_single.py',
+                                            'main_robustness_single.py', 'main_follow_random.py',
+                                            'main_soundness_tar1.py', 'main_soundness_tar2.py',
+                                            'main_robustness_tar1.py', 'main_robustness_tar2.py',)):
                     script_name = os.path.basename(frame.filename)
                     if script_name == 'main_soundness_ga.py':
                         self.fitness: Fitness = SoundnessFitness()
                     elif script_name == 'main_robustness_ga.py':
                         self.fitness: Fitness = RobustnessFitness()
+                    elif script_name == 'main_doppeltest_ga.py':
+                        self.fitness: Fitness = DoppeltestFitness()
+                    # random iteration, using +1 as the fake fitness direction
+                    elif script_name == 'main_follow_random.py':
+                        self.fitness: Fitness = MaxSingleFitness()
+                    elif script_name == 'main_soundness_single.py':
+                        self.fitness: Fitness = MinSingleFitness()
+                    elif script_name == 'main_robustness_single.py':
+                        self.fitness: Fitness = MinSingleFitness()
+                    elif script_name == 'main_soundness_tar1.py':
+                        self.fitness: Fitness = MinSingleFitness()
+                    elif script_name == 'main_soundness_tar2.py':
+                        self.fitness: Fitness = MaxSingleFitness()
+                    elif script_name == 'main_robustness_tar1.py':
+                        self.fitness: Fitness = MinSingleFitness()
+                    elif script_name == 'main_robustness_tar2.py':
+                        self.fitness: Fitness = MinSingleFitness()
                     break
         except Exception as e:
             print(f'Error in __post_init__: {e}')

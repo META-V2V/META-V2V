@@ -59,7 +59,22 @@ class ApolloContainer:
         assert self.is_running(
         ), f'Instance {self.container_name} is not running.'
         ctn = docker.from_env().containers.get(self.container_name)
-        return ctn.attrs['NetworkSettings']['IPAddress']
+        attrs = ctn.attrs
+        # If container runs with host network, there is no container IP; use localhost
+        if attrs.get('HostConfig', {}).get('NetworkMode') == 'host':
+            return '127.0.0.1'
+        net_settings = attrs.get('NetworkSettings', {}) or {}
+        # Legacy/bridge mode field (may be empty on newer Docker)
+        legacy_ip = net_settings.get('IPAddress')
+        if legacy_ip:
+            return legacy_ip
+        # Newer Docker: IP is under NetworkSettings.Networks[<network>].IPAddress
+        networks = net_settings.get('Networks') or {}
+        for net_info in networks.values():
+            candidate_ip = net_info.get('IPAddress')
+            if candidate_ip:
+                return candidate_ip
+        raise RuntimeError(f"Unable to determine IP address for container {self.container_name}")
 
     def start_instance(self, restart=False) -> None:
         """
@@ -284,15 +299,29 @@ class ApolloContainer:
         Stop the docker container
         """
         self.logger.debug(f'Stopping container')
+        # stop the container
         cmd = f'docker stop {self.container_name}'
         subprocess.run(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        self.logger.debug(f'Stopped container')
-
-    def remove_instance(self) -> None:
-        """
-        Remove the docker container, this means that the container cache will be deleted
-        """
-        self.logger.debug(f'Removing container')
+        # remove the container
         cmd = f'docker rm {self.container_name}'
         subprocess.run(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        self.logger.debug(f'Removed container')
+        # delete the corresponding volumes
+        time.sleep(3)           # wait for the container stop and remove
+        # delete the corresponding volumes
+        volume_names = ['yolov4', 'smoke', 'faster_rcnn', 'audio']
+        client = docker.from_env()
+        for vol in volume_names:
+            try:
+                vol_name = f'apollo_{vol}_volume_{self.username}'
+                client.volumes.get(vol_name).remove(force=True)
+            except docker.errors.NotFound:
+                self.logger.debug(f'Tried to remove volume {vol_name} but it does not exist')
+            except docker.errors.APIError as e:
+                # Gracefully handle "volume is in use" (HTTP 409 Conflict)
+                status_code = getattr(getattr(e, 'response', None), 'status_code', None)
+                explanation = getattr(e, 'explanation', None) or str(e)
+                if status_code == 409 or ('in use' in explanation.lower()):
+                    self.logger.warning(f'Volume {vol_name} is in use, skipping removal')
+                else:
+                    self.logger.error(f'Failed to remove volume {vol_name}: {explanation}')
+        self.logger.debug(f'Stopped and removed container')

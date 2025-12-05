@@ -78,13 +78,14 @@ def random_numeric_id(length:int=5) -> List[int]:
     """
     return sorted(random.sample(range(100000, 999999), k=length))
 
-def save_record_files_and_chromosome(timestamp: str, gen_name: str, ind_name: str,
+def save_record_files_and_chromosome(container_names: List[str], timestamp: str, gen_name: str, ind_name: str,
                                     fol_name: str, ch: dict, 
                                     min_distances: Dict[Tuple[int, int], float],
                                     bk_mode: str, bk_param: Any) -> None:
     """
     Save the record file and the genetic representation
 
+    :param List[str] container_names: the names of the containers to be used for saving the record files
     :param str timestamp: timestamp of this runtime batch
     :param str gen_name: name of the generation
     :param str ind_name: name of the individual
@@ -100,8 +101,15 @@ def save_record_files_and_chromosome(timestamp: str, gen_name: str, ind_name: st
         os.makedirs(dest)
 
     fileList = glob.glob(f'{APOLLO_ROOT}/records/*')
-    for filePath in fileList:
-        shutil.copy2(filePath, dest)
+    # for multi-process running, we need to move the record files only from the containers that are running
+    file_in_this_runtime: List[str] = [file for file in fileList if any(container_name in file for container_name in container_names)]
+    for filePath in file_in_this_runtime:
+        shutil.move(filePath, dest)
+    # rename the record file, remove the apollo_dev_ROUTE[i] prefix in MT_ROOT/records/timestamp directory
+    for file in os.listdir(dest):
+        if file.endswith('.00000'):
+            new_name = file.split('.', 1)[1]
+            os.rename(os.path.join(dest, file), os.path.join(dest, new_name))
 
     sc_file = os.path.join(dest, "scenario.json")
     with open(sc_file, 'w') as fp:
@@ -114,7 +122,7 @@ def save_record_files_and_chromosome(timestamp: str, gen_name: str, ind_name: st
     # save the mbk parameters
     bk_file = os.path.join(dest, "communication.json")
     if bk_mode == 'MessageBroker':
-        bk_param = None              # parano sense for MessageBroker
+        bk_param = None              # param no sense for MessageBroker
     with open(bk_file, 'w') as fp:
         json.dump({'mode': bk_mode, 'param': bk_param}, fp, indent=4)
 
@@ -156,5 +164,29 @@ def kill_apollo_container(route_name: str):
 
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while killing container: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+def get_max_container_number() -> int:
+    """
+    Get the maximum container number from the docker ps command, in order to avoid the container id conflict
+    for multi-process running of this framework
+
+    :returns: the maximum container number
+    :rtype: int
+    """
+    try:
+        result = subprocess.run(
+            ['docker', 'ps', '--format', '{{.Names}}'], 
+            capture_output=True, 
+            text=True
+        )
+        containers = result.stdout.strip().split('\n')
+        max_container_number = -1                        # default to no container running
+        for container in containers:
+            if container.startswith("apollo_dev_ROUTE_"):
+                container_number = int(container.split('_')[-1])
+                max_container_number = max(max_container_number, container_number)
+        return max_container_number
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

@@ -1,6 +1,8 @@
 import os
 import csv
 from datetime import datetime
+import json
+import fcntl
 from functools import partial
 from deap import algorithms, base, tools
 from broker.factory import BrokerFactory
@@ -13,7 +15,7 @@ from genetic.mutation import mut_scenario
 from genetic.evaluate import eval_stage_1, eval_stage_2
 from config import (APOLLO_ROOT, HD_MAP, MAX_ADC_COUNT, RECORDS_DIR, 
                     RUN_FOR_HOUR, POP_SIZE, STAGE1, BK_PARAM_MAP)
-from utils import BK_FILE_MAP, BK_HEAD_MAP
+from utils import BK_FILE_MAP, BK_HEAD_MAP, get_max_container_number
 
 # [Warning] Please do not modify this file's name,
 # coz we've used inspect.stack() to determine which entrance is calling
@@ -37,13 +39,25 @@ def main_soundness(bk_type: str, cxpb: float, mutpb: float):
     """
     mp = MapParser.get_instance(HD_MAP)
     bkf = BrokerFactory()
-    containers = [
-        ApolloContainer(APOLLO_ROOT, f'ROUTE_{x}') for x in range(MAX_ADC_COUNT)]
     # Initialize all apollo containers
-    for ctn in containers:
-        ctn.start_instance()
-        ctn.start_dreamview()
-        print(f'Dreamview at http://{ctn.ip}:{ctn.port}')
+    containers = []
+    # lock file path
+    lock_file_path = "/tmp/meta-v2v-container.lock"
+
+    for _ in range(MAX_ADC_COUNT):
+        # get the unique container number and start the instance
+        with open(lock_file_path, 'a+') as lock_file:
+            fcntl.flock(lock_file, fcntl.LOCK_EX)
+            try:
+                container = ApolloContainer(APOLLO_ROOT, f'ROUTE_{get_max_container_number()+1}')
+                containers.append(container)
+                container.start_instance()
+            finally:
+                fcntl.flock(lock_file, fcntl.LOCK_UN)
+        # finish the subsequent non-critical steps outside the lock, shorten the lock holding time
+        container.start_dreamview()
+        print(f'Dreamview at http://{container.ip}:{container.port}')
+
     srunner = ScenarioRunner(containers)
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
@@ -67,6 +81,10 @@ def main_soundness(bk_type: str, cxpb: float, mutpb: float):
         header.append('max_diff')
         header.append('min_diff')
         writer.writerow(header)
+    # write the hyperparams to a json file, in case of forget
+    hyper_param_json = os.path.join(RECORDS_DIR, timestamp, 'hyper_param.json')
+    with open(hyper_param_json, 'w') as f:
+        json.dump({'cxpb': cxpb, 'mutpb': mutpb}, f)
 
     # start the genetic algorithm cycle
     start_time = datetime.now()
@@ -146,6 +164,8 @@ def main_soundness(bk_type: str, cxpb: float, mutpb: float):
         # timer check
         tdelta = (datetime.now() - start_time).total_seconds()
         if tdelta / 3600 > RUN_FOR_HOUR:
+            for ctn in containers:
+                ctn.stop_instance()
             break
 
 if __name__ == '__main__':

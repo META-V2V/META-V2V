@@ -3,6 +3,8 @@ import math
 import os
 import subprocess
 import time
+import fcntl
+from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Set, Tuple
 from shapely.geometry import LineString, Polygon
@@ -335,27 +337,103 @@ def extract_main_decision(data: ADCTrajectory) -> Set[Tuple]:
 
     return decisions
 
-def clean_appolo_dir() -> None:
+def clean_apollo_dir() -> None:
     """
     Removes Apollo's log files to save disk space
+    Process-safe version with file locking for multi-process support
     """
-    # remove data dir
-    subprocess.run(f"rm -rf {APOLLO_ROOT}/data".split())
+    
+    # using file locking to ensure that only one python process executes the
+    # cleanup operation at a time
+    lock_file = Path(APOLLO_ROOT) / ".cleanup.lock"
+    
+    try:
+        with open(lock_file, 'a+') as lock:
+            # try to get an exclusive lock, if not available, block
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            
+            try:
+                # clean data directory, use more secure way to delete files
+                data_dirs = ['bag', 'core', 'log']
+                for data_dir in data_dirs:
+                    dir_path = Path(APOLLO_ROOT) / 'data' / data_dir
+                    if dir_path.exists():
+                        # delete files one by one instead of using rm -rf, more secure
+                        for item in dir_path.iterdir():
+                            try:
+                                if item.is_file():
+                                    item.unlink()
+                                elif item.is_dir():
+                                    import shutil
+                                    shutil.rmtree(item, ignore_errors=True)
+                            except (PermissionError, OSError) as e:
+                                print(f"Warning: Failed to delete {item}: {e}")
+                
+                # clean log files, add retry mechanism
+                fileList = glob.glob(f'{APOLLO_ROOT}/*.log.*')
+                for filePath in fileList:
+                    max_retries = 3
+                    for attempt in range(max_retries):
+                        try:
+                            if os.path.exists(filePath):
+                                os.remove(filePath)
+                            break
+                        except (PermissionError, OSError) as e:
+                            if attempt < max_retries - 1:
+                                time.sleep(0.1)  # wait for a short time and retry
+                                continue
+                            else:
+                                print(f"Warning: Failed to delete {filePath} after {max_retries} attempts: {e}")
+                
+                # create records directory, use exist_ok=True to avoid race condition
+                records_dir = Path(APOLLO_ROOT) / 'records'
+                records_dir.mkdir(exist_ok=True)
+                
+            finally:
+                # release the lock
+                fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+                
+    except (PermissionError, OSError) as e:
+        print(f"Warning: Could not acquire cleanup lock, proceeding without lock: {e}")
+        # if cannot get the lock, revert to the original logic but add better error handling
+        _clean_without_lock()
+    finally:
+        # clean the lock file
+        try:
+            if lock_file.exists():
+                lock_file.unlink()
+        except:
+            pass  # ignore the lock file cleanup failure
 
-    # remove records dir
-    subprocess.run(f"rm -rf {APOLLO_ROOT}/records".split())
-
-    # remove logs
+def _clean_without_lock() -> None:
+    """
+    cleanup function without lock, as a fallback solution when lock cannot be acquired
+    """
+    # use subprocess but add error handling
+    cleanup_commands = [
+        f"rm -rf {APOLLO_ROOT}/data/bag/*",
+        f"rm -rf {APOLLO_ROOT}/data/core/*", 
+        f"rm -rf {APOLLO_ROOT}/data/log/*"
+    ]
+    
+    for cmd in cleanup_commands:
+        try:
+            result = subprocess.run(cmd.split(), capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f"Warning: Command '{cmd}' failed: {result.stderr}")
+        except Exception as e:
+            print(f"Warning: Failed to execute '{cmd}': {e}")
+    
+    # clean log files
     fileList = glob.glob(f'{APOLLO_ROOT}/*.log.*')
     for filePath in fileList:
-        os.remove(filePath)
-
-    # create data dir
-    subprocess.run(f"mkdir {APOLLO_ROOT}/data".split())
-    subprocess.run(f"mkdir {APOLLO_ROOT}/data/bag".split())
-    subprocess.run(f"mkdir {APOLLO_ROOT}/data/log".split())
-    subprocess.run(f"mkdir {APOLLO_ROOT}/data/core".split())
-    subprocess.run(f"mkdir {APOLLO_ROOT}/records".split())
+        try:
+            os.remove(filePath)
+        except Exception as e:
+            print(f"Warning: Failed to delete {filePath}: {e}")
+    
+    # create records directory
+    os.makedirs(os.path.join(APOLLO_ROOT, 'records'), exist_ok=True)
 
 def calculate_velocity(linear_velocity: Point3D) -> float:
     """

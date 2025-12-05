@@ -80,7 +80,7 @@ class IntermittenceBroker(MessageBroker):
                         perception_obs.append(obs[x])
                     except KeyError:
                         continue
-                perception_obs += pds         # add pedestrian obstacles
+                perception_obs += pds
                 header = Header(
                     timestamp_sec=time.time(),
                     module_name='MAGGIE',

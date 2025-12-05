@@ -116,7 +116,7 @@ class LatencyBroker(MessageBroker):
                         continue
                     if runner.nid in obs_poly and i in obs_poly:
                         perception_obs.append(obs[i])
-                perception_obs += pds      # add pedestrian obstacles
+                perception_obs += pds
                 
                 # Queue the message for delayed publishing
                 self.message_queue.put((runner.nid, perception_obs, header_sequence_num))

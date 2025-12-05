@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple, Dict
 from apollo.container import ApolloContainer
 from apollo.apollo_runner import ApolloRunner
 from apollo.cyber_bridge import Topics
-from apollo.utils import clean_appolo_dir
+from apollo.utils import clean_apollo_dir
 from broker.factory import BrokerFactory
 from config import SCENARIO_UPPER_LIMIT
 from scenario import Scenario
@@ -93,7 +93,7 @@ class ScenarioRunner:
             t.join()
 
         # remove Apollo logs
-        clean_appolo_dir()
+        clean_apollo_dir()
 
         # initialize pedestrian manager
         self.pm = PedestrianManager(self.curr_scenario.pd_section)
@@ -128,8 +128,8 @@ class ScenarioRunner:
         scenario_logger = get_scenario_logger()
         # starting scenario
         if save_record:
-            for r in self.__runners:
-                r.container.start_recorder(fol_name)
+            for i, r in enumerate(self.__runners):
+                r.container.start_recorder(f'Car_{i}')
         # create the collision detector
         detector = CollisionDetector(self.__runners, self.curr_scenario)
 
@@ -171,8 +171,10 @@ class ScenarioRunner:
             time.sleep(2)
             bk_mode = BrokerFactory().mode
             bk_param = BrokerFactory().param
-            save_record_files_and_chromosome(
-                timestamp, gen_name, ind_name, fol_name, self.curr_scenario.to_dict(), self.min_distances, bk_mode, bk_param)
+            container_names = [r.container.container_name for r in self.__runners]
+            save_record_files_and_chromosome(container_names,
+                timestamp, gen_name, ind_name, fol_name, self.curr_scenario.to_dict(), 
+                self.min_distances, bk_mode, bk_param)
 
         mbk.stop()
         for runner in self.__runners:

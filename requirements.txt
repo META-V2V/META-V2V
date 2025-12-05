@@ -6,3 +6,4 @@ pandas==2.3.0
 protobuf==3.19.0
 Shapely==2.1.1
 websocket_client==1.8.0
+cyber_record

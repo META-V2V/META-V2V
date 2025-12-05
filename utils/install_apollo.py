@@ -37,15 +37,6 @@ def check_cmd(cmd) -> bool:
     """Check if a command exists"""
     return shutil.which(cmd) is not None
 
-def check_cuda_available() -> bool:
-    """Check if CUDA is available on the system"""
-    # Check if nvidia-smi exists and works
-    returncode, stdout, _ = run_cmd("nvidia-smi", check=False, capture=True)
-    if returncode == 0 and stdout:
-        log_info("CUDA detected on the system")
-        return True
-    return False
-
 def install_dependency(dependency: str):
     """Install missing dependency based on the system"""
     log_info(f"Installing {dependency}...")
@@ -83,28 +74,11 @@ def install_dependency(dependency: str):
         run_cmd("sudo systemctl enable docker")
         run_cmd(f"sudo usermod -aG docker {os.getenv('USER')}")
         
-        log_error("Docker installed. Please restart the host machine for docker daemon service to take effect. Then re-run install_apollo.py")
+        log_error("Docker installed. Please restart the host machine for docker daemon service to take effect. Then re-run ./utils/install_apollo.py")
         sys.exit(1)
     elif dependency == 'git':
         run_cmd("sudo apt-get update")
         run_cmd("sudo apt-get install -y git")
-    elif dependency == 'nvidia-container-toolkit':
-        log_info("Installing NVIDIA Container Toolkit...")
-        
-        # Add NVIDIA repository
-        run_cmd("distribution=$(. /etc/os-release;echo $ID$VERSION_ID)")
-        run_cmd("curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg")
-        run_cmd("curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list")
-        
-        # Install NVIDIA Container Toolkit
-        run_cmd("sudo apt-get update")
-        run_cmd("sudo apt-get install -y nvidia-container-toolkit")
-        
-        # Configure Docker to use NVIDIA Container Runtime
-        run_cmd("sudo nvidia-ctk runtime configure --runtime=docker")
-        run_cmd("sudo systemctl restart docker")
-        
-        log_success("NVIDIA Container Toolkit installed and configured successfully")
 
 def check_and_install_dependencies():
     """Check and install missing dependencies"""
@@ -115,11 +89,6 @@ def check_and_install_dependencies():
         'git': 'Git version control',
         'docker': 'Docker container platform'
     }
-    
-    # Optional dependencies (only if CUDA is available)
-    optional_dependencies = {}
-    if check_cuda_available():
-        optional_dependencies['nvidia-container-toolkit'] = 'NVIDIA Container Toolkit for GPU support'
     
     # Check base dependencies first
     missing_base_deps = []
@@ -148,47 +117,6 @@ def check_and_install_dependencies():
             log_error("Cannot proceed without required base dependencies")
             sys.exit(1)
     
-    # Now check optional dependencies (only after Docker is available)
-    if optional_dependencies:
-        log_info("Checking optional GPU dependencies...")
-        missing_optional_deps = []
-        
-        for cmd, desc in optional_dependencies.items():
-            if cmd == 'nvidia-container-toolkit':
-                # Special check for nvidia-container-toolkit
-                # First check if nvidia-container-runtime is available
-                if check_cmd('nvidia-container-runtime'):
-                    log_success(f"{cmd} - {desc}")
-                else:
-                    # Fallback: test with Docker if runtime not found
-                    returncode, _, _ = run_cmd("docker run --rm --gpus all nvidia/cuda-runtime:latest nvidia-smi", check=False, capture=True)
-                    if returncode == 0:
-                        log_success(f"{cmd} - {desc}")
-                    else:
-                        missing_optional_deps.append((cmd, desc))
-        
-        # Install optional dependencies if missing
-        if missing_optional_deps:
-            log_warning(f"Missing {len(missing_optional_deps)} optional dependency(ies):")
-            for cmd, desc in missing_optional_deps:
-                log_warning(f"  - {cmd} ({desc})")
-            
-            response = input("Would you like to install missing optional dependencies automatically? (y/N): ").strip().lower()
-            if response in ['y', 'yes']:
-                for cmd, desc in missing_optional_deps:
-                    install_dependency(cmd)
-                    # Verify installation
-                    if cmd == 'nvidia-container-toolkit':
-                        # Test GPU access in Docker - use lightweight runtime
-                        returncode, _, _ = run_cmd("docker run --rm --gpus all nvidia/cuda-runtime:latest nvidia-smi", check=False, capture=True)
-                        if returncode == 0:
-                            log_success(f"{cmd} installed successfully")
-                        else:
-                            log_error(f"Failed to install {cmd}")
-                            sys.exit(1)
-            else:
-                log_warning("Optional dependencies not installed. GPU support may not be available.")
-    
     log_success("All dependencies are available")
 
 def main():
@@ -207,8 +135,10 @@ def main():
 
     # Check user privileges
     if os.geteuid() == 0:
-        log_error("Please do not run as root")
-        sys.exit(1)
+        sudo_user = os.environ.get("SUDO_USER")
+        if sudo_user and sudo_user != 'root':
+            log_error("Detect that the script is running as root through sudo, but the current login user is not root. Please run the script directly as a non-root user, or switch to the root account and run again.")
+            sys.exit(1)
 
     # First part: install Apollo
     log_info("=== Install Baidu Apollo ===")
@@ -272,7 +202,7 @@ def main():
 
     # 5. Build Apollo
     log_info("Building Apollo...")
-    build_cmd = f"docker exec -it {container_name} /bin/bash -c 'cd /apollo && ./apollo.sh build'"
+    build_cmd = f"docker exec -it {container_name} /bin/bash -c 'cd /apollo && ./apollo.sh build_cpu'"
     log_info("Building may take a while, please wait...")
 
     returncode, _, _ = run_cmd(build_cmd, check=False)
@@ -283,10 +213,14 @@ def main():
         log_info("Stopping and removing the container...")
         run_cmd(f"docker stop {container_name}")
         run_cmd(f"docker rm {container_name}")
+        time.sleep(3)           # wait for the container stop and remove
+        volume_names = ['yolov4', 'smoke', 'faster_rcnn', 'audio']
+        for volume_name in volume_names:
+            run_cmd(f'docker volume rm apollo_{volume_name}_volume_{os.getenv("USER")}')
         log_success("Container stopped and removed successfully")
     else:
         log_error("Apollo build failed")
-        log_info("Please manually enter the container and run: cd /apollo && ./apollo.sh build")
+        log_info("Please manually enter the container and run: cd /apollo && ./apollo.sh build_cpu")
 
     # Installation completed
     log_success("=== Apollo Installation Completed ===")
@@ -294,4 +228,5 @@ def main():
     log_info("")
 
 if __name__ == "__main__":
-    main() 
+
+    main()

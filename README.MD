@@ -8,7 +8,7 @@ behavior by injecting controlled perturbations into information sharing mechanis
 the **METAdata**.
 
 <div align="center">
-  <img src="./figs/problem.svg" alt="Problem illustration" width="200">
+  <img src="./docs/figs/problem.svg" alt="Problem illustration" width="200">
 </div>
 
 This repository enables the evaluation of **decision soundness** and **planning robustness** in autonomous 
@@ -19,29 +19,27 @@ driving systems (ADS) under four typical V2V perception anomalies: **radius limi
 
 ## Features
 
-The workflow of META²V2V is shown below. Further details on the eight metamorphic relations (MRs), derived from four perturbation types and two evaluation dimensions, can be found in [FEATURES.MD](FEATURES.MD).
+The workflow of META²V2V is shown below. Further details on the eight metamorphic relations (MRs), derived from four perturbation types and two evaluation dimensions, can be found in [FEATURES.MD](./docs/FEATURES.MD).
 
 <div align="center">
-  <img src="./figs/framework.svg" alt="Architecture of META²V2V" width="700">
+  <img src="./docs/figs/framework.svg" alt="Architecture of META²V2V" width="700">
 </div>
 
-Design details are provided in [ARTIFACT.MD](ARTIFACT.MD).
-
-The structure of the code repository is documented in [TREE.MD](TREE.MD).
+Design details are provided in [ARTIFACT.MD](./docs/ARTIFACT.MD). The structure of the code repository is documented in [TREE.MD](./docs/TREE.MD).
 
 ## Hardware Requirements
 
 - Intel Core i9 12900K (16-core) and above, as well as AMD chips with comparable performance on x64 architecture, are also supported.
 
-> [Warning] If you’re using an Intel Core i9 13th or 14th generation processor with a K suffix, you may encounter a segmentation fault during prolonged runs. More details, please refer: [Intel Core 13th and 14th Gen Desktop Instability Root Cause](https://community.intel.com/t5/Blogs/Tech-Innovation/Client/Intel-Core-13th-and-14th-Gen-Desktop-Instability-Root-Cause/post/1633239).
+> **[WARNING]** If you’re using an Intel Core i9 13th or 14th generation processor with a K suffix, you may encounter a segmentation fault during prolonged runs. More details, please refer: [Intel Core 13th and 14th Gen Desktop Instability Root Cause](https://community.intel.com/t5/Blogs/Tech-Innovation/Client/Intel-Core-13th-and-14th-Gen-Desktop-Instability-Root-Cause/post/1633239).
 
 - 64 GB memory and above
 
-- NVIDIA RTX 3090 and above **(Optional)**
+- **No GPU is required**.
 
 ## QuickStart
 
-> For more detailed installation instructions, please refer to [INSTALL.MD](INSTALL.MD).
+> For more detailed installation instructions, please refer to [INSTALL.MD](./docs/INSTALL.MD).
 
 ### Software Prerequisites
 
@@ -49,7 +47,9 @@ The structure of the code repository is documented in [TREE.MD](TREE.MD).
 
 - Python 3.12
 
-- NVIDIA driver version 455.32.00 or later (Optional)
+- **Please disable or hide the GPU drivers as much as possible to prevent Apollo’s scripts from detecting any GPU drivers and the NVIDIA Container Toolkit.**
+
+> TODO: Modify the original DoppelTest version Baidu Apollo scripts, disable GPU driver and NVIDIA Container Toolkit detection automatically.
 
 ### Install META²V2V
 
@@ -62,13 +62,13 @@ pip install -r requirements.txt
 
 ### Install Baidu Apollo
 
-To simplify the installation process, we provide an automatic script [install_apollo.py](install_apollo.py). The user just need to run this script on a clean Ubuntu system to automatically download and install the specific version of Baidu Apollo we use.
+To simplify the installation process, we provide an automatic script [./utils/install_apollo.py](./utils/install_apollo.py). The user just need to run this script on a clean Ubuntu system to automatically download and install the specific version of Baidu Apollo we use.
 
 ```bash
-python install_apollo.py
+python ./utils/install_apollo.py
 ```
 
-> If you encounter any issues with the automated script above, please report them to the authors as soon as possible so we can fix the bugs in the installation script. You can also resolve them by following the manual installation method in [INSTALL.MD](INSTALL.MD).
+> If you encounter any issues with the automated script above, please report them to the authors as soon as possible so we can fix the bugs in the installation script. You can also resolve them by following the manual installation method in [INSTALL.MD](./docs/INSTALL.MD).
 
 ### Run the main scripts
 
@@ -86,10 +86,17 @@ python main_soundness_ga.py
 python main_robustness_ga.py
 ```
 
-3. Start the random baseline of soundness and robustness violation via:
+3. Start other explorations for the main paper's comparision via:
 
 ```bash
-python main_follow_random.py
+python main_follow_random.py      # Random evolution baseline
+python main_doppeltest_ga.py      # DoppelTest fitness function baseline
+python main_soundness_single.py   # Soundness Single-Obj fitness
+python main_soundness_tar1.py     # Soundness only target 1
+python main_soundness_tar2.py     # Soundness only target 2
+python main_robustness_single.py  # Robustness Single-Obj fitness
+python main_robustness_tar1.py    # Robustness only target 1
+python main_robustness_tar2.py    # Robustness only target 2
 ```
 
 ### Replay the runtime
@@ -110,7 +117,7 @@ python replay.py
 
 ## Virtual Machine
 
-We also provide a VM virtual machine .ova image, which you can download from [https://doi.org/10.5281/zenodo.15772642](https://zenodo.org/records/15772643?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjZjMDdlMzkwLWJhZWEtNDM0NS1iZmEwLTVlYTUwM2U4N2Q0MSIsImRhdGEiOnt9LCJyYW5kb20iOiIzOThmZWJlZTEzYzM0MWMwYmNjMmM1ZjEwZjY1MWNiZCJ9.4dirzKQIIrI87ubc6uIAeLX_v0loATgeyxtwO_NKT7i0XOajgxqDwJ-pUZsa1f5ipmtPmls1Ph_VoKPqqt0e5A). Using tools like [VirtualBox](https://www.virtualbox.org/) or any OVA v2.0 compatible virtualization software, you can run the VM without setting up any environment. Simply log in, open the terminal, run the main script, and follow the interactive prompts to immediately reproduce our results. For more details, please refer to: [VIRTUALMACHINE.MD](VIRTUALMACHINE.MD).
+We also provide a VM virtual machine .ova image, which you can download from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15772642.svg)](https://doi.org/10.5281/zenodo.15772642). Using tools like [VirtualBox](https://www.virtualbox.org/) or any OVA v2.0 compatible virtualization software, you can run the VM without setting up any environment. Simply log in, open the terminal, run the main script, and follow the interactive prompts to immediately reproduce our results. For more details, please refer to the README file in zenodo drive.
 
 ## Acknowledgement
 
