@@ -146,20 +146,16 @@ def main():
     # 1. Clone code
     if not apollo_root.exists():
         log_info("Cloning Apollo code...")
-        # Clone the official repository of DoppelTest (ICSE 2023), a previously published work.
-        # Note: This repository is used as a dependency. Our work (META²V2V) is independent and unrelated to the DoppelTest authors.
-        # Declaration: The authors of this paper have no overlap with the DoppelTest teams and declare no conflict of interest.
-        # We comply with the double-blind review policy.
+        # Clone the specific version of Baidu Apollo we use, which is also
+        # archived in Zenodo: https://doi.org/10.5281/zenodo.17959018
         run_cmd(f"git clone -b DoppelTest https://github.com/META-V2V/BaiduApollo.git {apollo_root}")
         log_success("Code cloned successfully")
     else:
         log_warning(f"Apollo directory already exists: {apollo_root}")
         if input("Do you want to re-clone? (y/N): ").lower() == 'y':
             shutil.rmtree(apollo_root)
-        # Clone the official repository of DoppelTest (ICSE 2023), a previously published work.
-        # Note: This repository is used as a dependency. Our work (META²V2V) is independent and unrelated to the DoppelTest authors.
-        # Declaration: The authors of this paper have no overlap with DoppelTest teams and declare no conflict of interest.
-        # We comply with the double-blind review policy.
+        # Clone the specific version of Baidu Apollo we use, which is also
+        # archived in Zenodo: https://doi.org/10.5281/zenodo.17959018
             run_cmd(f"git clone -b DoppelTest https://github.com/META-V2V/BaiduApollo.git {apollo_root}")
             log_success("Code re-cloned successfully")
 

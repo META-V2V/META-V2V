@@ -46,8 +46,6 @@ You can also resolve them by following the manual installation method.
 git clone -b DoppelTest https://github.com/META-V2V/BaiduApollo.git  
 ```
 
-> Declaration: The authors of this paper have no overlap with the DoppelTest teams and declare no conflict of interest. We strictly follow the double-blind review mechanism.
-
 2. In the directory of BaiduApollo (i.e. `META-V2V/BaiduApollo` by running `cd ./BaiduApollo`), create the necessary directories by running:
 
 ```bash
@@ -94,8 +92,6 @@ docker volume rm apollo_audio_volume_${USER}
 ## Acknowledgement
 
 Our framework builds upon the reusable artifact of **DoppelTest** [[2](#ref2)], originally published in ICSE 2023.
-
-> Declaration: The authors of this paper have no overlap with the DoppelTest teams and declare no conflict of interest. We strictly follow the double-blind review mechanism.
 
 ## References
 

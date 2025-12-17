@@ -57,8 +57,6 @@ We welcome your feedback and hope the artifact proves useful for reproduction an
 
 Our framework builds upon the reusable artifact of **DoppelTest** [[1](#ref1)], originally published in ICSE 2023.
 
-> Declaration: The authors of this paper have no overlap with the DoppelTest teams and declare no conflict of interest. We strictly follow the double-blind review mechanism.
-
 Q: Why didn’t we separate DoppelTest and our own work by placing the original source code in a standalone folder?
 
 A: The reason is that we extensively modified its dependencies, class attributes, and functions, fixed a number of bugs.
