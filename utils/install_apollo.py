@@ -124,11 +124,11 @@ def main():
 
     # Path settings
     script_dir = Path(__file__).parent.absolute()
-    apollo_root = script_dir / "BaiduApollo"
-    mt_root = script_dir
+    project_root = script_dir.parent.absolute()
+    apollo_root = project_root / "BaiduApollo"
 
     log_info(f"Apollo directory: {apollo_root}")
-    log_info(f"META²V2V directory: {mt_root}")
+    log_info(f"META²V2V directory: {project_root}")
 
     # Check dependencies
     check_and_install_dependencies()
