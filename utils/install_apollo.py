@@ -150,7 +150,7 @@ def main():
         # Note: This repository is used as a dependency. Our work (META²V2V) is independent and unrelated to the DoppelTest authors.
         # Declaration: The authors of this paper have no overlap with the DoppelTest teams and declare no conflict of interest.
         # We comply with the double-blind review policy.
-        run_cmd(f"git clone -b DoppelTest https://github.com/YuqiHuai/BaiduApollo.git {apollo_root}")
+        run_cmd(f"git clone -b DoppelTest https://github.com/META-V2V/BaiduApollo.git {apollo_root}")
         log_success("Code cloned successfully")
     else:
         log_warning(f"Apollo directory already exists: {apollo_root}")
@@ -160,7 +160,7 @@ def main():
         # Note: This repository is used as a dependency. Our work (META²V2V) is independent and unrelated to the DoppelTest authors.
         # Declaration: The authors of this paper have no overlap with DoppelTest teams and declare no conflict of interest.
         # We comply with the double-blind review policy.
-            run_cmd(f"git clone -b DoppelTest https://github.com/YuqiHuai/BaiduApollo.git {apollo_root}")
+            run_cmd(f"git clone -b DoppelTest https://github.com/META-V2V/BaiduApollo.git {apollo_root}")
             log_success("Code re-cloned successfully")
 
     # 2. Create necessary directories in BaiduApollo

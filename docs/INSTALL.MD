@@ -6,10 +6,6 @@
 
 - Python 3.12
 
-- **Please disable or hide the GPU drivers as much as possible to prevent Apollo’s scripts from detecting any GPU drivers and the NVIDIA Container Toolkit.**
-
-> TODO: Modify the original DoppelTest version Baidu Apollo scripts, disable GPU driver and NVIDIA Container Toolkit detection automatically.
-
 ## Install META²V2V
 
 Install the required Python libraries using:
@@ -47,7 +43,7 @@ You can also resolve them by following the manual installation method.
 1. In the **root directory** of META²V2V (`./META-V2V`), clone the specific Baidu Apollo repository branch provided by DoppelTest [[2](#ref2)]:
 
 ```bash
-git clone -b DoppelTest https://github.com/YuqiHuai/BaiduApollo.git  
+git clone -b DoppelTest https://github.com/META-V2V/BaiduApollo.git  
 ```
 
 > Declaration: The authors of this paper have no overlap with the DoppelTest teams and declare no conflict of interest. We strictly follow the double-blind review mechanism.

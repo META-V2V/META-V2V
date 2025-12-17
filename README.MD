@@ -47,10 +47,6 @@ Design details are provided in [ARTIFACT.MD](./docs/ARTIFACT.MD). The structure 
 
 - Python 3.12
 
-- **Please disable or hide the GPU drivers as much as possible to prevent Apollo’s scripts from detecting any GPU drivers and the NVIDIA Container Toolkit.**
-
-> TODO: Modify the original DoppelTest version Baidu Apollo scripts, disable GPU driver and NVIDIA Container Toolkit detection automatically.
-
 ### Install META²V2V
 
 ```bash
