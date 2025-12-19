@@ -13,7 +13,7 @@ We believe our artifact qualifies for these badges based on the following eviden
 ### Artifact Availability
 
 - **Opensource Commitment:**  
-  The artifact is open-sourced during the review process and will be publicly released on GitHub upon paper acceptance, allowing the community to freely download, inspect, and reuse the implementation. This project is licensed under the GNU General Public License v3.0 (GPL-3.0) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0).
+  The artifact is open-sourced during the review process and will be publicly released on GitHub upon paper acceptance, allowing the community to freely download, inspect, and reuse the implementation. The release of this code repository is also archived on Zenodo:[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15747956.svg)](https://doi.org/10.5281/zenodo.15747956). This project is licensed under the GNU General Public License v3.0 (GPL-3.0) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0).
 
 ---
 

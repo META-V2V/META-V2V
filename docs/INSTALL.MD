@@ -45,6 +45,7 @@ You can also resolve them by following the manual installation method.
 ```bash
 git clone -b DoppelTest https://github.com/META-V2V/BaiduApollo.git  
 ```
+> We slightly modified the Apollo code in the DoppelTest branch to prevent the scripts from detecting the GPU driver and the NVIDIA Container Toolkit. The corresponding customized Baidu Apollo version is also archived at [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17959018.svg)](https://doi.org/10.5281/zenodo.17959018).
 
 2. In the directory of BaiduApollo (i.e. `META-V2V/BaiduApollo` by running `cd ./BaiduApollo`), create the necessary directories by running:
 
