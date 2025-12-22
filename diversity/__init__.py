@@ -1,3 +1,20 @@
+"""
+Diversity module is used to calculate the similarity of two scenarios,
+Demo for future extension for other researchers.
+We adopt the population diversity metric used in the MOSAT paper, 
+https://dl.acm.org/doi/10.1145/3540250.3549100
+namely the average distance difference between vehicle trajectories.
+Since each scenario may involve multiple vehicles, we simplify this metric as follows.
+Specifically, for each individual in the source test cases of a population,
+we select the trajectories of the two vehicles that are most likely to interact.
+We then use cyber_record to slice the trajectory logs and align them at a temporal
+resolution of 0.1 seconds per frame (following ACAV https://dl.acm.org/doi/10.1145/3597503.3639175).
+For each pair of scenarios, we compute the average distance between the two vehicles.
+Note that this computation is performed across individuals N, combination N(N-1)/2.
+i.e., horizontally across multiple scenarios within the same generation.
+A little bit slow, any pull request for algorithm optimization is welcome.
+"""
+
 import os
 import json
 from typing import List, Tuple
