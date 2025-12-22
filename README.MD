@@ -5,7 +5,9 @@
 META²V2V is a **METAmorphic** framework designed to evaluate the decision-making quality of Autonomous Driving Systems (ADS) in multi-agent scenarios with vehicle-to-vehicle (V2V)
 communication. It systematically explores the effects of degraded inter-vehicle perception on ADS
 behavior by injecting controlled perturbations into information sharing mechanisms by modifying
-the **METAdata**.
+the **METAdata**. [![GitHub release](https://img.shields.io/github/v/release/META-V2V/META-V2V)](
+https://github.com/META-V2V/META-V2V/releases
+)
 
 <div align="center">
   <img src="./docs/figs/problem.svg" alt="Problem illustration" width="200">
