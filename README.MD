@@ -97,6 +97,8 @@ python main_robustness_tar1.py    # Robustness only target 1
 python main_robustness_tar2.py    # Robustness only target 2
 ```
 
+After executing the script, the experimental logs and collected data will be stored in the ```records``` directory, which correspond to the results reported in the main paper.
+
 ### Replay the runtime
 
 We also provide two types of replay modes, with interactive prompts as well, you can even drag the file into the shell.
