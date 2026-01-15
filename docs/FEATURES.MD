@@ -21,7 +21,7 @@
 Each perturbation simulates a specific type of distortion in
 shared information, while each oracle determines whether the
 system’s behaviour remains logically consistent or sufficiently
-resilient. We construct eight metamorphic relations (MRs) by pairing four types of mutual-perception perturbations with two behavioral evaluation dimensions. The resulting exploration space is illustrated in the following figure.
+resilient. We construct eight metamorphic relations (MRs) by pairing four types of mutual-perception perturbations with two behavioural evaluation dimensions. The resulting exploration space is illustrated in the following figure.
 
 <div align="center">
   <img src="./figs/mrcube.svg" alt="8 MRs" width="300">

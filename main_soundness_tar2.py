@@ -24,7 +24,7 @@ from utils import BK_FILE_MAP, BK_HEAD_MAP, get_max_container_number
 def main_soundness(bk_type: str, cxpb: float, mutpb: float):
     """
     Main function of the soundness genetic algorithm.
-    Currently, we use two-stage evolution to find the differential behaviors
+    Currently, we use two-stage evolution to find the differential behaviours
     for the subtype-Broker with imperfect perception.
     
     In the first stage, we only run the source test case, coz we want the source 
