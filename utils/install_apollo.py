@@ -35,6 +35,11 @@ def run_cmd(cmd, check=True, capture=False):
 
 def check_cmd(cmd) -> bool:
     """Check if a command exists"""
+    # TODO: Distinguish which Docker engine has already been installed on the system,
+    # if the traditional Docker engine is installed, OK; Docker Desktop is NOT SUPPORTED.
+    # will use `docker context ls` to impl the check, and `docker context use` to swtich
+    # Details: Docker CLI with Docker Desktop backend does not support docker bridge network,
+    # see: https://docs.docker.com/desktop/networking/#there-is-no-docker0-bridge-on-the-host
     return shutil.which(cmd) is not None
 
 def install_dependency(dependency: str):
