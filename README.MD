@@ -9,8 +9,11 @@ the **METAdata**. [![GitHub release](https://img.shields.io/github/v/release/MET
 https://github.com/META-V2V/META-V2V/releases
 )
 
-<div align="center">
+<div align="center"
+     style="display:flex; justify-content:center; align-items:center; gap:24px; flex-wrap:nowrap; white-space:nowrap;">
+  <img src="./docs/figs/artifacts-available-v1_1.svg" alt="Artifact Available Badge" width="110">
   <img src="./docs/figs/problem.svg" alt="Problem illustration" width="200">
+  <img src="./docs/figs/artifacts-reusable-v1_1.svg" alt="Artifact Reusable Badge" width="110">
 </div>
 
 This repository enables the evaluation of **decision soundness** and **planning robustness** in autonomous 
